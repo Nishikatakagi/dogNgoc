@@ -1,7 +1,6 @@
-package com.nishikatakagi.store.mapper;
+package com.nishikatakagi.store.Mapper;
 
 import com.nishikatakagi.store.models.Product;
-import com.nishikatakagi.store.models.ProductDto;
 import com.nishikatakagi.store.models.ProductHistory;
 
  public class ProductMapper {
@@ -16,9 +15,4 @@ import com.nishikatakagi.store.models.ProductHistory;
 		return ph;
 	}
 
-//	
-//	public static ProductDto converttt (Product product) {
-//		ProductDto pdto = new ProductDto(product.getName(),product.getBrand(),product.getCategory(),product.getPrice(),product.getDescription(),product.getImgFileName());
-//		return pdto;
-//	}
 }

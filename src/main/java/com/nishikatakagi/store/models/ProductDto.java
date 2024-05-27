@@ -1,5 +1,7 @@
 package com.nishikatakagi.store.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.Min;

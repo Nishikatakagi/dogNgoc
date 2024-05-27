@@ -4,28 +4,41 @@ import jakarta.persistence.*;
 
 import java.util.Date;
 
+
 @Entity
 @Table(name = "products")
 public class Product{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    public int id;
 
-    private String name;
+    public int age;
 
-    private String brand;
+    public String name;
 
-    private String category;
+    public String brand;
 
-    private double price;
+    public String category;
+
+    public double price;
 
     @Column(columnDefinition = "TEXT")
-    private String description;
+    public String description;
 
-    private Date createAt;
+    public Date createAt;
 
-    private String imgFileName;
+    public String imgFileName;
+
+    private Date createBy;
+
+    private Date deleteBy;
+
+    private String Description;
+
+    private Date DeleteAt;
+
+    private String Reasondelete;
 
     public Product(int id) {
         this.id = id;
