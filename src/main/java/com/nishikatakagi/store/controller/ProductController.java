@@ -1,6 +1,6 @@
 package com.nishikatakagi.store.controller;
 
-import com.nishikatakagi.store.Mapper.ProductMapper;
+import com.nishikatakagi.store.mapper.ProductMapper;
 import com.nishikatakagi.store.models.Product;
 import com.nishikatakagi.store.models.ProductDto;
 import com.nishikatakagi.store.models.ProductHistory;
@@ -42,7 +42,7 @@ public class ProductController {
 
     @GetMapping({"", "/"})
     public String showProductList(Model model){
-        List<Product> products = new ArrayList<Product>();
+        List<Product> products = new ArrayList<>();
 		products = pr.findAll();
         model.addAttribute("hi","hello");
         model.addAttribute("products",products);
@@ -130,7 +130,7 @@ public class ProductController {
 						StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println(e);
 		}
      	
      	Product product = new Product();
@@ -153,7 +153,6 @@ public class ProductController {
     		Product product = pr.findById(id).get();
     		model.addAttribute("product", product);
 
-			//System.out.println(product);
     		ProductDto productDto = new ProductDto();
     		productDto.setName(product.getName());
     		productDto.setBrand(product.getBrand());

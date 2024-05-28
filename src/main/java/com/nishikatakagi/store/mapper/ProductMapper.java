@@ -1,4 +1,4 @@
-package com.nishikatakagi.store.Mapper;
+package com.nishikatakagi.store.mapper;
 
 import com.nishikatakagi.store.models.Product;
 import com.nishikatakagi.store.models.ProductHistory;
