@@ -1,7 +1,5 @@
 package com.nishikatakagi.store.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.Min;
@@ -30,7 +28,8 @@ public class ProductDto {
 
 	private MultipartFile imgFile;
 
-	public ProductDto(String name, String brand, String category, double price, String description,MultipartFile imgFile) {
+	public ProductDto(String name, String brand, String category, double price, String description,
+			MultipartFile imgFile) {
 		this.name = name;
 		this.brand = brand;
 		this.category = category;
@@ -40,7 +39,6 @@ public class ProductDto {
 	}
 
 	public ProductDto() {
-		// TODO Auto-generated constructor stub
 
 	}
 

@@ -9,6 +9,8 @@ import com.nishikatakagi.store.Repository.ProductRepository;
 
 import jakarta.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.nio.file.*;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,190 +33,188 @@ import java.util.List;
 @Controller
 @RequestMapping("/products")
 public class ProductController {
-    private ProductRepository pr;
-    private ProductHistoryRepository phr;
+	private ProductRepository pr;
+	private ProductHistoryRepository phr;
+	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-    public ProductController(ProductRepository pr, ProductHistoryRepository phr) {
-        this.pr = pr;
-        this.phr = phr;
-    }
+	public ProductController(ProductRepository pr, ProductHistoryRepository phr) {
+		this.pr = pr;
+		this.phr = phr;
+	}
 
-    @GetMapping({"", "/"})
-    public String showProductList(Model model){
-        List<Product> products = new ArrayList<>();
+	@GetMapping({ "", "/" })
+	public String showProductList(Model model) {
+		List<Product> products = new ArrayList<>();
 		products = pr.findAll();
-        model.addAttribute("hi","hello");
-        model.addAttribute("products",products);
-        return "products/index";
-    }
-    
-    @GetMapping("/incre")
-    public String showProductListIncrebyPrice(Model model){
-        List<Product> products = pr.findAll(Sort.by(Sort.Direction.ASC,"price"));
-        model.addAttribute("products",products);
-        return "products/incre";
-    }
-    
-    // xóa một sản phẩm theo id và lưu trữ vào bảng producthistory
-    @GetMapping("/delete/{id}")
-    public String deleteAndShow(Model model,@PathVariable int id){
-    	Product p = pr.findById(id).orElseThrow(() -> new RuntimeException("Account does not exist"));
-    	ProductHistory ph = ProductMapper.convertt(p);
-    	phr.save(ph);
-    	pr.deleteById(id);
-        List<Product> products = pr.findAll();
-        model.addAttribute("products",products);
-        return "products/index";
-    }
-    
-    // hiện thị danh sách các sản phẩm đã xóa, lấy db từ bảng productHistory
-    @GetMapping("/history")
-    public String showProductListHistory(Model model){
-        List<ProductHistory> products = phr.findAll();
-        model.addAttribute("products",products);
-        return "products/history";
-    }
-    
-    @GetMapping("/restore/{id}")
-    public String restoreProduct(Model model,@PathVariable int id){
-    	ProductHistory p = phr.findById(id).orElseThrow(() -> new RuntimeException("Account does not exist"));
-    	Product ph = ProductMapper.convertt(p);
-    	pr.save(ph);
-    	phr.deleteById(id);
-        List<ProductHistory> products = phr.findAll();
-        model.addAttribute("products",products);
-        return "products/history";
-    }
-    
-    @GetMapping("/create")
-    public String showCreatePage(Model model) {
+		model.addAttribute("hi", "hello");
+		model.addAttribute("products", products);
+		return "products/index";
+	}
+
+	@GetMapping("/incre")
+	public String showProductListIncrebyPrice(Model model) {
+		List<Product> products = pr.findAll(Sort.by(Sort.Direction.ASC, "price"));
+		model.addAttribute("products", products);
+		return "products/incre";
+	}
+
+	// xóa một sản phẩm theo id và lưu trữ vào bảng producthistory
+	@GetMapping("/delete/{id}")
+	public String deleteAndShow(Model model, @PathVariable int id) {
+		Product p = pr.findById(id).orElseThrow(() -> new RuntimeException("Account does not exist"));
+		ProductHistory ph = ProductMapper.convertt(p);
+		phr.save(ph);
+		pr.deleteById(id);
+		List<Product> products = pr.findAll();
+		model.addAttribute("products", products);
+		return "products/index";
+	}
+
+	// hiện thị danh sách các sản phẩm đã xóa, lấy db từ bảng productHistory
+	@GetMapping("/history")
+	public String showProductListHistory(Model model) {
+		List<ProductHistory> products = phr.findAll();
+		model.addAttribute("products", products);
+		return "products/history";
+	}
+
+	@GetMapping("/restore/{id}")
+	public String restoreProduct(Model model, @PathVariable int id) {
+		ProductHistory p = phr.findById(id).orElseThrow(() -> new RuntimeException("Account does not exist"));
+		Product ph = ProductMapper.convertt(p);
+		pr.save(ph);
+		phr.deleteById(id);
+		List<ProductHistory> products = phr.findAll();
+		model.addAttribute("products", products);
+		return "products/history";
+	}
+
+	@GetMapping("/create")
+	public String showCreatePage(Model model) {
 		int check = 1;
-		if(check == 1) {
+		if (check == 1) {
 			ProductDto productDto = new ProductDto();
 			model.addAttribute("productDto", productDto);
 			return "products/CreateProduct";
-		}else{
+		} else {
 			return "none";
 		}
-    }
-    
-    @PostMapping("/create")
-    public String createProduct(
-    		@Valid @ModelAttribute ProductDto productDto,
-    		BindingResult result) {
-    	
-    	if(productDto.getImgFile().isEmpty()) {
-    		result.addError(new FieldError("productDto","imgFile","The image file is requied"));
-    	}
-    	
-    	if(result.hasErrors()) {
-    		return "products/CreateProduct";
-    	}
+	}
 
-    	MultipartFile image = productDto.getImgFile();
-    	Date createAt = new Date();
-    	String storageFileName = createAt.getTime() + "_" + image.getOriginalFilename();
-    	
-     	try {
+	@PostMapping("/create")
+	public String createProduct(
+			@Valid @ModelAttribute ProductDto productDto,
+			BindingResult result) {
+
+		if (productDto.getImgFile().isEmpty()) {
+			result.addError(new FieldError("productDto", "imgFile", "The image file is requied"));
+		}
+
+		if (result.hasErrors()) {
+			return "products/CreateProduct";
+		}
+
+		MultipartFile image = productDto.getImgFile();
+		Date createAt = new Date();
+		String storageFileName = createAt.getTime() + "_" + image.getOriginalFilename();
+
+		try {
 			String uploadDir = "public/images/";
 
 			Path uploadPath = Paths.get(uploadDir);
 
-			if(!Files.exists(uploadPath)) {
+			if (!Files.exists(uploadPath)) {
 				Files.createDirectories(uploadPath);
 			}
 
-			try (InputStream inputStream = image.getInputStream()){
+			try (InputStream inputStream = image.getInputStream()) {
 				Files.copy(inputStream, Paths.get(uploadDir + storageFileName),
 						StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			logger.error("An exception occurred during processing:", e);
 		}
-     	
-     	Product product = new Product();
-     	product.setName(productDto.getName());
-     	product.setBrand(productDto.getBrand());
-     	product.setCategory(productDto.getCategory());
-     	product.setPrice(productDto.getPrice());
-     	product.setDescription(productDto.getDescription());
-     	product.setCreateAt(createAt);
-     	product.setImgFileName(storageFileName);
-     	
-     	pr.save(product);
-    	return "redirect:/products";
-    }
-    		
-    		
-    @GetMapping("/edit")
-    public String showEditPage(Model model, @RequestParam int id) {
-    	try {
-    		Product product = pr.findById(id).get();
-    		model.addAttribute("product", product);
 
-    		ProductDto productDto = new ProductDto();
-    		productDto.setName(product.getName());
-    		productDto.setBrand(product.getBrand());
-    		productDto.setCategory(product.getCategory());
-    		productDto.setPrice(product.getPrice());
-    		productDto.setDescription(product.getDescription());
-    		
-    		model.addAttribute("productDto",productDto);
+		Product product = new Product();
+		product.setName(productDto.getName());
+		product.setBrand(productDto.getBrand());
+		product.setCategory(productDto.getCategory());
+		product.setPrice(productDto.getPrice());
+		product.setDescription(productDto.getDescription());
+		product.setCreateAt(createAt);
+		product.setImgFileName(storageFileName);
+
+		pr.save(product);
+		return "redirect:/products";
+	}
+
+	@GetMapping("/edit")
+	public String showEditPage(Model model, @RequestParam int id) {
+		try {
+			Product product = pr.findById(id).get();
+			model.addAttribute("product", product);
+
+			ProductDto productDto = new ProductDto();
+			productDto.setName(product.getName());
+			productDto.setBrand(product.getBrand());
+			productDto.setCategory(product.getCategory());
+			productDto.setPrice(product.getPrice());
+			productDto.setDescription(product.getDescription());
+
+			model.addAttribute("productDto", productDto);
 		} catch (Exception e) {
 			System.out.println("Exception: " + e.getMessage());
 			return "redirect:/products";
 		}
-    	return "products/edit";
-    }
-    
-    
-    @PostMapping("/edit")
-    public String updateProduct(Model model, @RequestParam int id,
-    		@Valid @ModelAttribute ProductDto productDto,
-    		BindingResult resule, String mess) {
-		int count = 0;
-    	try {
+		return "products/edit";
+	}
+
+	@PostMapping("/edit")
+	public String updateProduct(Model model, @RequestParam int id,
+			@Valid @ModelAttribute ProductDto productDto,
+			BindingResult resule, String mess) {
+		try {
 			Product product = pr.findById(id).get();
-			model.addAttribute("product",product);
-			
-			if(resule.hasErrors()) {
+			model.addAttribute("product", product);
+
+			if (resule.hasErrors()) {
 				return "products/edit";
 			}
-			
-			if(!productDto.getImgFile().isEmpty()) {
-				//delete old image
+
+			if (!productDto.getImgFile().isEmpty()) {
+				// delete old image
 				String uploadDir = "public/images/";
 				Path oldImagePath = Paths.get(uploadDir + product.getImgFileName());
-				
+
 				try {
 					Files.delete(oldImagePath);
 				} catch (Exception e) {
-					System.out.println("Exception: " + e.getMessage());
+					logger.error("An exception occurred during processing:", e);
 				}
-				
+
 				// save new image file
 				MultipartFile image = productDto.getImgFile();
-		    	Date createAt = new Date();
-		    	String storageFileName = createAt.getTime() + "_" + image.getOriginalFilename();
-		    	try (InputStream inputStream = image.getInputStream()){
+				Date createAt = new Date();
+				String storageFileName = createAt.getTime() + "_" + image.getOriginalFilename();
+				try (InputStream inputStream = image.getInputStream()) {
 					Files.copy(inputStream, Paths.get(uploadDir + storageFileName),
 							StandardCopyOption.REPLACE_EXISTING);
 				}
-		    	
-		    	product.setImgFileName(storageFileName);  
+
+				product.setImgFileName(storageFileName);
 			}
-			
+
 			product.setName(productDto.getName());
-    		product.setBrand(productDto.getBrand());
-    		product.setCategory(productDto.getCategory());
-    		product.setPrice(productDto.getPrice());
-    		product.setDescription(productDto.getDescription());;
-			
-    		pr.save(product);
-    		
+			product.setBrand(productDto.getBrand());
+			product.setCategory(productDto.getCategory());
+			product.setPrice(productDto.getPrice());
+			product.setDescription(productDto.getDescription());
+
+			pr.save(product);
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-    	return "redirect:/products";
-    }
+		return "redirect:/products";
+	}
 }
