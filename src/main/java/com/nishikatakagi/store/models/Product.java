@@ -11,24 +11,24 @@ public class Product{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
+    private int id;
 
-    public int age;
+    private int age;
 
-    public String name;
+    private String name;
 
-    public String brand;
+    private String brand;
 
-    public String category;
+    private String category;
 
-    public double price;
+    private double price;
 
     @Column(columnDefinition = "TEXT")
-    public String description;
+    private String description;
 
-    public Date createAt;
+    private Date createAt;
 
-    public String imgFileName;
+    private String imgFileName;
 
 
     public Product(int id) {
