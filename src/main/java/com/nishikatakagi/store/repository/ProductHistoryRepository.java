@@ -1,4 +1,4 @@
-package com.nishikatakagi.store.Repository;
+package com.nishikatakagi.store.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -30,15 +30,6 @@ public class Product{
 
     public String imgFileName;
 
-    private Date createBy;
-
-    private Date deleteBy;
-
-    private String Description;
-
-    private Date DeleteAt;
-
-    private String Reasondelete;
 
     public Product(int id) {
         this.id = id;

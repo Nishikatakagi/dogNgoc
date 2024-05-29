@@ -4,8 +4,8 @@ import com.nishikatakagi.store.mapper.ProductMapper;
 import com.nishikatakagi.store.models.Product;
 import com.nishikatakagi.store.models.ProductDto;
 import com.nishikatakagi.store.models.ProductHistory;
-import com.nishikatakagi.store.Repository.ProductHistoryRepository;
-import com.nishikatakagi.store.Repository.ProductRepository;
+import com.nishikatakagi.store.repository.ProductHistoryRepository;
+import com.nishikatakagi.store.repository.ProductRepository;
 
 import jakarta.validation.Valid;
 
