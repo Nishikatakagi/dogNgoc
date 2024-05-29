@@ -18,9 +18,9 @@
 				
 				<form method="post" enctype="multipart/form-data" th:object=${productDto}>
 					<div class=row mb-3>
-						<label class="col-sm-4 col-form-label">Name</label>
+						<label for="product-name" class="col-sm-4 col-form-label">Name</label>
 						<div class="col-sm-8">
-							<input class="form-control" th:field="${productDto.name}">
+							<input id="product-name" class="form-control" th:field="${productDto.name}">
 							<p th:if="${#fields.hasErrors('name')}" th:errorclass="text-danger"
 								th:errors="${productDto.name}"></p>
 						</div>
@@ -29,9 +29,9 @@
 					
 					
 					<div class="row mb-3">
-						<label class="col-sm-4 col-form-label">Brand</label>
-						<div class="col-sm-8">
-							<input class="form-control" th:field="${productDto.brand}">
+						<label for="product-brand" class="col-sm-4 col-form-label">Brand</label>
+						<div  class="col-sm-8">
+							<input id="product-brand" class="form-control" th:field="${productDto.brand}">
 							<p th:if="${#fields.hasErrors('brand')}" th:errorclass="text-danger"
 								th:errors="${productDto.brand}"></p>
 						</div>
@@ -39,9 +39,9 @@
 					
 					
 					<div class="row mb-3">
-						<label class="col-sm-4 col-form-label">Category</label>
+						<label for="product-category" class="col-sm-4 col-form-label">Category</label>
 						<div class="col-sm-8">
-							<select class="form-select" th:field="${productDto.category}">
+							<select id="product-category" class="form-select" th:field="${productDto.category}">
 								<option value="Other">Other</option>
 								<option value="Phones">Phones</option>
 								<option value="Computers">Computers</option>

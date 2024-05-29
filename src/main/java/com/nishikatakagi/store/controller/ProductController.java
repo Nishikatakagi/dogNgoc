@@ -6,6 +6,7 @@ import com.nishikatakagi.store.models.ProductDto;
 import com.nishikatakagi.store.models.ProductHistory;
 import com.nishikatakagi.store.Repository.ProductHistoryRepository;
 import com.nishikatakagi.store.Repository.ProductRepository;
+import com.nishikatakagi.store.exception.ProductNotFoundException;
 
 import jakarta.validation.Valid;
 
@@ -163,7 +164,7 @@ public class ProductController {
 
 			model.addAttribute("productDto", productDto);
 		} catch (Exception e) {
-			System.out.println("Exception: " + e.getMessage());
+			logger.error("Product not found with id: " + id);
 			return "redirect:/products";
 		}
 		return "products/edit";
@@ -213,7 +214,7 @@ public class ProductController {
 			pr.save(product);
 
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new ProductNotFoundException("Product not found with id: " + id);
 		}
 		return "redirect:/products";
 	}
